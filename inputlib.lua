@@ -18,30 +18,40 @@ limitations under the license.
 
 input={}
 function input:init()
-	wait=true
-	buttons={}
-	pressed={}
-	released={}
+	self.wait=true
+	self.bstate={}
+	self.transition={}
+	self.semantic={}
+	self.lastchange={}
 end
 function input:update()
-	if (wait) then
-		wait = btn()!=0
+	if (self.wait) then
+		self.wait = btn()!=0
 	else
-		local i
+		local i,t
+		t=time()
 		for i = 1,6 do
 			local b=btn(i-1)
-			pressed[i] = not buttons[i] and b
-			released[i] = buttons[i] and not b
-			buttons[i]=b
+			if b and not self.bstate[i] then
+				self.transition[i]=1
+			elseif self.bstate[i] and not b then
+				self.transition[i]=-1
+			else
+				self.transition[i]=0
+			end
+			self.bstate[i]=b
+			if self.transition[i] != 0 then
+				self.lastchange[i]=t
+			end
 		end
 	end
 end
 function input:state(n)
-	return buttons[n]
+	return self.bstate[n]
 end
 function input:pressednow(n)
-	return pressed[n]
+	return self.transition[n] == 1
 end
 function input:releasednow(n)
-	return released[n]
+	return self.transition[n] == -1
 end
