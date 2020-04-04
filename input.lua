@@ -31,7 +31,7 @@ function _draw()
 	for i=1,6 do
 		local x=((i-1)*20)
 		local c1,c2
-		if (input:state(i)) then
+		if input:state(i) then
 			c1=10
 		else
 			c1=6

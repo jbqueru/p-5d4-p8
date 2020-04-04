@@ -16,23 +16,23 @@ see the license for the specific language governing permissions and
 limitations under the license.
 ]]
 
-input = {}
+input={}
 function input:init()
-	wait = true
-	buttons = {}
-	pressed = {}
-	released = {}
+	wait=true
+	buttons={}
+	pressed={}
+	released={}
 end
 function input:update()
 	if (wait) then
-		wait = btn() != 0
+		wait = btn()!=0
 	else
 		local i
 		for i = 1,6 do
-			local b = btn(i-1)
+			local b=btn(i-1)
 			pressed[i] = not buttons[i] and b
 			released[i] = buttons[i] and not b
-			buttons[i] = b
+			buttons[i]=b
 		end
 	end
 end
