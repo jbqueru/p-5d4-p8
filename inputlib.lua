@@ -19,17 +19,19 @@ limitations under the license.
 input={}
 function input:init()
 	self.wait=true
+	self.timerdelay=0.15
 	self.bstate={}
-	self.transition={}
-	self.semantic={}
-	self.lastchange={}
+	self.transition={0,0,0,0,0,0}
+	self.sequence={0,0,0,0,0,0}
+	self.timerstart={0,0,0,0,0,0}
+	self.semantic={0,0,0,0,0,0}
 end
 function input:update()
 	if (self.wait) then
 		self.wait = btn()!=0
 	else
 		local i,t
-		t=time()
+		t=time()+0.008
 		for i = 1,6 do
 			local b=btn(i-1)
 			if b and not self.bstate[i] then
@@ -40,9 +42,49 @@ function input:update()
 				self.transition[i]=0
 			end
 			self.bstate[i]=b
-			if self.transition[i] != 0 then
-				self.lastchange[i]=t
+
+--[[
+	idle: s=0, t=0. transition: pressed -> recentpressed, s=-1, start timer
+	recentpressed: s<0. transition: released -> recentreleased, -s, start timer
+		transition: timer -> idle, report s, s=0, start 2x timer
+	recentreleased: s>0. transition: pressed -> recentpressed, -s-1, start timer
+		transition: timer -> idle, report s, s=0. t=0
+	longpress: s=0, t!=0. transition: released -> idle, t=0
+		transition: timer -> longpress, report repeat, start timer
+]]
+			self.semantic[i]=0
+			if self.sequence[i]==0 and self.timerstart[i]==0 then -- idle
+				if self.transition[i]==1 then -- pressed
+					self.sequence[i]=-1
+					self.timerstart[i]=t
+				end
+			elseif self.sequence[i]<0 then -- recentpressed
+				if self.transition[i]==-1 then -- released
+					self.sequence[i]=-self.sequence[i]
+					self.timerstart[i]=t
+				elseif t-self.timerstart[i]>=self.timerdelay then -- timer expired
+					self.semantic[i]=self.sequence[i]
+					self.sequence[i]=0
+					self.timerstart[i]=t+self.timerdelay -- make the first repeat take 3x normal
+				end
+			elseif self.sequence[i]>0 then -- recentreleased
+				if self.transition[i]==1 then -- pressed
+					self.sequence[i]=-self.sequence[i]-1
+					self.timerstart[i]=t
+				elseif t-self.timerstart[i]>=self.timerdelay then -- timer expired
+					self.semantic[i]=self.sequence[i]
+					self.sequence[i]=0
+					self.timerstart[i]=0
+				end
+			elseif self.sequence[i]==0 and self.timerstart[i]!=0 then -- repeating
+				if self.transition[i]==-1 then -- released
+					self.timerstart[i]=0
+				elseif t-self.timerstart[i]>=self.timerdelay then -- timer expired
+					self.transition[i]=2
+					self.timerstart[i]=t
+				end
 			end
+
 		end
 	end
 end
@@ -54,4 +96,10 @@ function input:pressednow(n)
 end
 function input:releasednow(n)
 	return self.transition[n] == -1
+end
+function input:actionnow(n)
+	return self.transition[n]>0
+end
+function input:multinow(n)
+	return self.semantic[n]
 end

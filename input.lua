@@ -38,6 +38,8 @@ function _draw()
 		end
 		if input:pressednow(i) then
 			c2=11
+		elseif input:actionnow(i) then
+			c2=12
 		elseif input:releasednow(i) then
 			c2=8
 		else
