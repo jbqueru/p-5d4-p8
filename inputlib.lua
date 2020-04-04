@@ -19,8 +19,9 @@ limitations under the license.
 input = {}
 function input:init()
 	wait = true
-	buttons = {false,false,false,false,false,false}
+	buttons = {}
 	pressed = {}
+	released = {}
 end
 function input:update()
 	if (wait) then
@@ -28,14 +29,19 @@ function input:update()
 	else
 		local i
 		for i = 1,6 do
-			pressed[i] = not buttons[i] and btn(i - 1)
-			buttons[i] = btn(i - 1)
+			local b = btn(i-1)
+			pressed[i] = not buttons[i] and b
+			released[i] = buttons[i] and not b
+			buttons[i] = b
 		end
 	end
 end
-function input:button(n)
+function input:state(n)
 	return buttons[n]
 end
-function input:pressed(n)
+function input:pressednow(n)
 	return pressed[n]
+end
+function input:releasednow(n)
+	return released[n]
 end

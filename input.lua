@@ -31,13 +31,15 @@ function _draw()
 	for i=1,6 do
 		local x=((i-1)*20)
 		local c1,c2
-		if (input:button(i)) then
-			c1=7
+		if (input:state(i)) then
+			c1=10
 		else
 			c1=6
 		end
-		if (input:pressed(i)) then
-			c2=7
+		if input:pressednow(i) then
+			c2=11
+		elseif input:releasednow(i) then
+			c2=8
 		else
 			c2=6
 		end
