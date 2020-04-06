@@ -16,9 +16,23 @@ see the license for the specific language governing permissions and
 limitations under the license.
 ]]
 
+inputtst={}
+setmetatable(inputtst,inputtst)
+function inputtst:allbuttons()
+	return 0
+end
+function inputtst:button(i)
+	return false
+end
+function inputtst:time()
+	return 1
+end
+
 function _init()
 	input:init()
+	inputtst.__index=input
 	testresult=""
+	input:init()
 	cls()
 end
 

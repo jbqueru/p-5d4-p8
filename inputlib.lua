@@ -17,6 +17,15 @@ limitations under the license.
 ]]
 
 input={}
+function input:allbuttons()
+	return btn()
+end
+function input:button(i)
+	return btn(i)
+end
+function input:time()
+	return time()
+end
 function input:init()
 	self.wait=true
 	self.timerdelay=0.15
@@ -28,12 +37,12 @@ function input:init()
 end
 function input:update()
 	if (self.wait) then
-		self.wait = btn()!=0
+		self.wait = self:allbuttons()!=0
 	else
 		local i,t
-		t=time()+0.008
+		t=self:time()+0.008
 		for i = 1,6 do
-			local b=btn(i-1)
+			local b=self:button(i-1)
 			if b and not self.bstate[i] then
 				self.transition[i]=1
 			elseif self.bstate[i] and not b then
