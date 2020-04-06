@@ -70,9 +70,14 @@ function _draw()
 		end
 
 		local x=((i-1)*10)
+		local icon=sub("⬅️➡️⬆️⬇️🅾️❎",i,i)
 		rectfill(x,12,x+8,18,c1)
-		print(sub("⬅️➡️⬆️⬇️🅾️❎",i,i),x+1,13,0)
+--		rectfill(x+69,12,x+77,18,c1)
+		print(icon,x+1,13,0)
+--		print(icon,x+70,13,0)
 		rectfill(x,26,x+8,32,c2)
-		print(sub("⬅️➡️⬆️⬇️🅾️❎",i,i),x+1,27,0)
+--		rectfill(x+69,26,x+77,32,c2)
+		print(icon,x+1,27,0)
+--		print(icon,x+70,27,0)
 	end
 end
