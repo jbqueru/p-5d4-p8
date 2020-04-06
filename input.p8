@@ -21,4 +21,4 @@ limitations under the license.
 ]]
 
 #include inputlib.lua
-#include input.lua
+#include inputtst.lua

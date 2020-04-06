@@ -18,6 +18,7 @@ limitations under the license.
 
 function _init()
 	input:init()
+	testresult=""
 	cls()
 end
 
@@ -27,9 +28,17 @@ end
 
 function _draw()
 	cls(0)
+	if testresult=="" then
+		print("unit tests passed",0,0,11)
+	else
+		print("test results",0,40,7)
+		print(testresult,0,46)
+		print("unit tests failed",0,0,8)
+	end
+	print("button status",0,6,7)
+	print("button actions",0,20,7)
 	local i
 	for i=1,6 do
-		local x=((i-1)*20)
 		local c1,c2
 		if input:state(i) then
 			c1=10
@@ -45,9 +54,11 @@ function _draw()
 		else
 			c2=6
 		end
-		rectfill(x,0,x+18,8,c1)
-		rectfill(x,10,x+18,18,c2)
+
+		local x=((i-1)*10)
+		rectfill(x,12,x+8,18,c1)
+		print(sub("⬅️➡️⬆️⬇️🅾️❎",i,i),x+1,13,0)
+		rectfill(x,26,x+8,32,c2)
+		print(sub("⬅️➡️⬆️⬇️🅾️❎",i,i),x+1,27,0)
 	end
 end
-
-
