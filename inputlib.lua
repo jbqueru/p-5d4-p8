@@ -20,9 +20,6 @@ input={}
 function input:allbuttons()
 	return btn()
 end
-function input:button(i)
-	return btn(i)
-end
 function input:time()
 	return time()
 end
@@ -30,19 +27,27 @@ function input:init()
 	self.wait=true
 	self.timerdelay=0.15
 	self.bstate={}
-	self.transition={0,0,0,0,0,0}
-	self.sequence={0,0,0,0,0,0}
-	self.timerstart={0,0,0,0,0,0}
-	self.semantic={0,0,0,0,0,0}
+	self.transition={}
+	self.sequence={}
+	self.timerstart={}
+	self.semantic={}
+	local i
+	for i=1,6 do
+		add(self.transition,0)
+		add(self.sequence,0)
+		add(self.timerstart,0)
+		add(self.semantic,0)
+	end
 end
 function input:update()
+	local allb=self:allbuttons()
 	if (self.wait) then
-		self.wait = self:allbuttons()!=0
+		self.wait = allb!=0
 	else
 		local i,t
 		t=self:time()+0.008
 		for i = 1,6 do
-			local b=self:button(i-1)
+			local b=band(lshr(allb,i-1),1) != 0
 			if b and not self.bstate[i] then
 				self.transition[i]=1
 			elseif self.bstate[i] and not b then

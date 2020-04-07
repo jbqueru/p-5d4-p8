@@ -21,9 +21,6 @@ setmetatable(inputtst,inputtst)
 function inputtst:allbuttons()
 	return 0
 end
-function inputtst:button(i)
-	return false
-end
 function inputtst:time()
 	return 1
 end
