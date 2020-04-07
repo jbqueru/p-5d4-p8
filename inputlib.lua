@@ -32,7 +32,7 @@ function input:init()
 	self.timerstart={}
 	self.semantic={}
 	local i
-	for i=1,6 do
+	for i=1,12 do
 		add(self.transition,0)
 		add(self.sequence,0)
 		add(self.timerstart,0)
@@ -44,18 +44,20 @@ function input:update()
 	if (self.wait) then
 		self.wait = allb!=0
 	else
-		local i,t
+		local i,p,t
 		t=self:time()+0.008
-		for i = 1,6 do
-			local b=band(lshr(allb,i-1),1) != 0
-			if b and not self.bstate[i] then
-				self.transition[i]=1
-			elseif self.bstate[i] and not b then
-				self.transition[i]=-1
-			else
-				self.transition[i]=0
-			end
-			self.bstate[i]=b
+		for p = 0,1 do
+			for i = 1,6 do
+				local b=band(lshr(allb,p*8+i-1),1) != 0
+				local ii = p*6+i
+				if b and not self.bstate[ii] then
+					self.transition[ii]=1
+				elseif self.bstate[ii] and not b then
+					self.transition[ii]=-1
+				else
+					self.transition[ii]=0
+				end
+				self.bstate[ii]=b
 
 --[[
 	idle: s=0, t=0. transition: pressed -> recentpressed, s=-1, start timer
@@ -66,39 +68,39 @@ function input:update()
 	longpress: s=0, t!=0. transition: released -> idle, t=0
 		transition: timer -> longpress, report repeat, start timer
 ]]
-			self.semantic[i]=0
-			if self.sequence[i]==0 and self.timerstart[i]==0 then -- idle
-				if self.transition[i]==1 then -- pressed
-					self.sequence[i]=-1
-					self.timerstart[i]=t
-				end
-			elseif self.sequence[i]<0 then -- recentpressed
-				if self.transition[i]==-1 then -- released
-					self.sequence[i]=-self.sequence[i]
-					self.timerstart[i]=t
-				elseif t-self.timerstart[i]>=self.timerdelay then -- timer expired
-					self.semantic[i]=self.sequence[i]
-					self.sequence[i]=0
-					self.timerstart[i]=t+self.timerdelay -- make the first repeat take 3x normal
-				end
-			elseif self.sequence[i]>0 then -- recentreleased
-				if self.transition[i]==1 then -- pressed
-					self.sequence[i]=-self.sequence[i]-1
-					self.timerstart[i]=t
-				elseif t-self.timerstart[i]>=self.timerdelay then -- timer expired
-					self.semantic[i]=self.sequence[i]
-					self.sequence[i]=0
-					self.timerstart[i]=0
-				end
-			elseif self.sequence[i]==0 and self.timerstart[i]!=0 then -- repeating
-				if self.transition[i]==-1 then -- released
-					self.timerstart[i]=0
-				elseif t-self.timerstart[i]>=self.timerdelay then -- timer expired
-					self.transition[i]=2
-					self.timerstart[i]=t
+				self.semantic[ii]=0
+				if self.sequence[ii]==0 and self.timerstart[ii]==0 then -- idle
+					if self.transition[ii]==1 then -- pressed
+						self.sequence[ii]=-1
+						self.timerstart[ii]=t
+					end
+				elseif self.sequence[ii]<0 then -- recentpressed
+					if self.transition[ii]==-1 then -- released
+						self.sequence[ii]=-self.sequence[ii]
+						self.timerstart[ii]=t
+					elseif t-self.timerstart[ii]>=self.timerdelay then -- timer expired
+						self.semantic[ii]=self.sequence[i]
+						self.sequence[ii]=0
+						self.timerstart[ii]=t+self.timerdelay -- make the first repeat take 3x normal
+					end
+				elseif self.sequence[ii]>0 then -- recentreleased
+					if self.transition[ii]==1 then -- pressed
+						self.sequence[ii]=-self.sequence[ii]-1
+						self.timerstart[ii]=t
+					elseif t-self.timerstart[ii]>=self.timerdelay then -- timer expired
+						self.semantic[ii]=self.sequence[ii]
+						self.sequence[ii]=0
+						self.timerstart[ii]=0
+					end
+				elseif self.sequence[ii]==0 and self.timerstart[ii]!=0 then -- repeating
+					if self.transition[ii]==-1 then -- released
+						self.timerstart[ii]=0
+					elseif t-self.timerstart[ii]>=self.timerdelay then -- timer expired
+						self.transition[ii]=2
+						self.timerstart[ii]=t
+					end
 				end
 			end
-
 		end
 	end
 end

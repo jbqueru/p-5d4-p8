@@ -49,7 +49,7 @@ function _draw()
 	print("button status",0,6,7)
 	print("button actions",0,20,7)
 	local i
-	for i=1,6 do
+	for i=1,12 do
 		local c1,c2
 		if input:state(i) then
 			c1=10
@@ -67,14 +67,13 @@ function _draw()
 		end
 
 		local x=((i-1)*10)
-		local icon=sub("⬅️➡️⬆️⬇️🅾️❎",i,i)
+		if i>6 then
+			x+=9
+		end
+		local icon=sub("⬅️➡️⬆️⬇️🅾️❎⬅️➡️⬆️⬇️🅾️❎",i,i)
 		rectfill(x,12,x+8,18,c1)
---		rectfill(x+69,12,x+77,18,c1)
 		print(icon,x+1,13,0)
---		print(icon,x+70,13,0)
 		rectfill(x,26,x+8,32,c2)
---		rectfill(x+69,26,x+77,32,c2)
 		print(icon,x+1,27,0)
---		print(icon,x+70,27,0)
 	end
 end
