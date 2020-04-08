@@ -15,3 +15,5 @@ Library to handle inputs on pico-8
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
+
+A test harness exists in the `tests` branch.
